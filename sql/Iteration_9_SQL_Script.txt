@@ -59,6 +59,27 @@ INSERT INTO `song_people` (`song_id`, `people_id`, `role`) VALUES
 
 
 
+
+// relationship between movie, song, and people
+
+INSERT INTO `movie_people` (`movie_id`, `people_id`, `role`, `screen_name`) 
+VALUES(LAST_INSERT_ID(), '', '', '' );
+
+INSERT INTO `movie_song` (`movie_id`, `song_id`) 
+VALUES(LAST_INSERT_ID(),'');
+
+
+
+// Delete movie
+
+DELETE FROM movies
+WHERE movie_id = ;
+
+
+
+
+
+
 //  Foreign key constraints / relation
 
 -
