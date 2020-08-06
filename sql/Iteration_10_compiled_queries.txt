@@ -1,0 +1,178 @@
+
+Group: Elephant
+Iteration 10: compiled group queries
+
+-------------------------------------------------------------------------   
+-- Abdi Ali - new Query
+
+-- Searching movie by native_name or english_name
+-------------------------------------------------------------------------   
+[1] Your SQL query
+    
+    EXPLAIN
+    SELECT 
+    	`native_name`,
+        `english_name`
+    FROM `movies` 
+    WHERE native_name LIKE '%Joker%'
+    OR english_name LIKE '%Joker%'
+
+[2] EXPLAIN statement numbers prior to the optimization
+
+    
+    EXPLAIN # Before optimization : 761046  
+    
+
+[3] Steps you have taken to optimize the query
+
+* I indexed both native_name and english_name in movies table
+
+* I removed the '%' wild card search on both native_name and english_name 
+    from the front or beginning of the name.
+    
+* instead of using OR condition, switched to 'UNION ALL'
+
+
+EXPLAIN
+SELECT 
+	    `native_name`,
+        `english_name`
+FROM `movies` 
+WHERE native_name LIKE 'Joker%'
+
+UNION ALL
+
+SELECT 
+	    `native_name`,
+        `english_name`
+FROM `movies`
+WHERE english_name LIKE 'Joker%'
+
+[4] EXPLAIN statement numbers after the optimization.
+
+   rows # After optimization: 1 rows from both select
+   
+
+
+
+-------------------------------------------------------------------------   
+--  Chris Cassens
+-------------------------------------------------------------------------   
+[1] Your SQL query
+    SELECT * 
+    FROM `songs` 
+    WHERE title 
+    LIKE ‘%s'
+
+[2] EXPLAIN statement numbers prior to the optimization
+    rows # : 1125976
+
+[3] Steps you have taken to optimize the query
+I have indexed title in the songs table. I inserted a song after duplication of table data for testing purposes. 
+EXPLAIN SELECT title from `songs` WHERE title LIKE 'Heaven'
+
+[4] EXPLAIN statement numbers after the optimization.
+    rows # 1
+
+
+-------------------------------------------------------------------------   
+-- Ian Berube
+-------------------------------------------------------------------------   
+
+//QUERY #34 ORIGINAL AND OPTIMIZED
+//There's only one Frozen movie in the movies table out of 992,853 movies!
+
+//ORIGINAL (native_name is not indexed)
+
+EXPLAIN SELECT native_name
+FROM movies
+WHERE native_name LIKE 'fro%';
+	// rows = 992853
+
+//OPTIMIZED (native_name has been indexed)
+
+EXPLAIN SELECT native_name
+FROM movies
+WHERE native_name LIKE 'fro%';
+	// rows = 1
+	
+	
+-------------------------------------------------------------------------   	
+-- Shaun
+-------------------------------------------------------------------------   
+[1]
+SELECT s_link_type, COUNT(s_link_type) AS "Type" 
+FROM song_media 
+GROUP BY s_link_type 
+ORDER BY s_link_type
+
+[2] Before Rows # : 717220
+[3] 
+Step 1 Changes:
+⁃ Changed song_id to SMALLINT from INT
+⁃ Changed song_media_id to SMALLINT from INT
+Step 3 Changes:
+⁃ Added BTREE index for s_link_type to possibly assist with column comparisons going on behind the scenes, not necessarily in the query itself
+Step 7 Changes:
+⁃ ALTER TABLE `song_media` ADD FULLTEXT(`s_link_type`);
+⁃ automatically indexes each (presumably unique) value in s_link_type
+column
+Final Changes:
+⁃ Removed DESC from end of query because the sorting doesn’t really matter and it improved performance quite a bit 
+
+[4] After Rows # 716895
+
+-------------------------------------------------------------------------   	
+-- Olukole Solabi
+-------------------------------------------------------------------------  
+Sql code
+SELECT plot 
+FROM movie_data 
+Where plot = "fight";
+
+Row before optimization
+177531
+
+Action take to optimize
+indexed plot
+
+Row after optimization
+30284
+
+
+
+-------------------------------------------------------------------------   	
+-- Huy 
+-------------------------------------------------------------------------  
+[1] Your SQL query
+SELECT DISTINCT people.first_name, people.last_name, people.stage_name
+FROM `people` 
+INNER JOIN `movie_people`ON people.id = movie_people.people_id
+WHERE movie_people.role = 'supporting acto'
+
+[2] EXPLAIN statement numbers prior to the optimization
+Row number: 2483997
+[3] Steps you have taken to optimize the query
+I indexed movie_people.people_id and movie_people.role
+[4] EXPLAIN statement numbers after the optimization.
+Row number: 400856
+
+
+
+-------------------------------------------------------------------------   	
+-- Olaniyi 
+-------------------------------------------------------------------------  
+
+
+Sql query
+
+1. 
+    EXPLAIN 
+    SELECT title
+    FROM songs
+    WHERE title LIKE 'co%'
+
+2.First data rows – 289554
+3. Indexed the song title
+4.Explain gave new roll number – 68696
+
